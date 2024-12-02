@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Shield</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@400;700&family=Audiowide&family=Rajdhani:wght@400;700&family=Quantico:wght@400;700&display=swap');
+
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #3a86ff;
+            --success-color: #38b000;
+            --warning-color: #ffbe0b;
+            --danger-color: #ff006e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .dashboard {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .shield-container {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .shield {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff0000 0%, #0000ff 100%);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+            animation: spin 60s linear infinite, pulse 4s infinite alternate;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1.05) rotate(360deg); }
+        }
+
+        .shield:hover {
+            animation-play-state: paused;
+        }
+
+        .shield-star {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30%;
+            height: 30%;
+            background-color: white;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.7)); }
+            100% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9)); }
+        }
+
+        .shield-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 5px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .shield-ring:nth-child(2) {
+            width: 60%;
+            height: 60%;
+            animation: rotate 20s linear infinite;
+        }
+
+        .shield-ring:nth-child(3) {
+            width: 80%;
+            height: 80%;
+            animation: rotate 30s linear infinite reverse;
+        }
+
+        .shield-ring:nth-child(4) {
+            width: 100%;
+            height: 100%;
+            animation: rotate 40s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .shield:hover .shield-ring {
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .shield-category {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease-in-out;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .shield-category:nth-child(5) { transform: rotate(0deg) translateY(-40%); }
+        .shield-category:nth-child(6) { transform: rotate(90deg) translateY(-40%); }
+        .shield-category:nth-child(7) { transform: rotate(180deg) translateY(-40%); }
+        .shield-category:nth-child(8) { transform: rotate(270deg) translateY(-40%); }
+
+        .shield-category:hover {
+            font-size: 0.9rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        .stats {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .stats:hover {
+            transform: scale(1.05);
+            color: var(--accent-color);
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            font-family: 'Audiowide', cursive;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+        }
+
+        .nav-button:hover, .nav-button:focus {
+            color: var(--accent-color);
+            outline: none;
+            transform: translateY(-3px);
+        }
+
+        .nav-button::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .nav-button:hover::after, .nav-button:focus::after {
+            transform: scaleX(1);
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--accent-color);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: left;
+            box-shadow: 0 0 20px rgba(58, 134, 255, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            z-index: 2000;
+        }
+
+        .popup.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .popup p {
+            font-family: 'Quantico', sans-serif;
+            margin-bottom: 1rem;
+        }
+
+        .popup button {
+            font-family: 'Audiowide', cursive;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .popup button:hover, .popup button:focus {
+            background-color: var(--success-color);
+            outline: none;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .settings-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-group h3 {
+            font-family: 'Rajdhani', sans-serif;
+            margin-bottom: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        .range-slider:hover {
+            opacity: 1;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .range-slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .range-slider::-webkit-slider-thumb:hover,
+        .range-slider::-moz-range-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(58, 134, 255, 0.5);
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .shield-container {
+                width: 200px;
+                height: 200px;
+            }
+
+            .stats {
+                font-size: 1.2rem;
+            }
+
+            .popup {
+                width: 90%;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 3000;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="shield-container">
+            <div class="shield" id="shield">
+                <div class="shield-star"></div>
+                <div class="shield-ring"></div>
+                <div class="shield-ring"></div>
+                <div class="shield-ring"></div>
+            </div>
+        </div>
+        <div class="stats" id="stats">Loading stats...</div>
+    </div>
+
+    <nav class="nav-bar">
+        <button class="nav-button" onclick="showDashboard()">Dashboard</button>
+        <button class="nav-button" onclick="showSettings()">Settings</button>
+        <button class="nav-button" onclick="showAnalytics()">Analytics</button>
+        <button class="nav-button" onclick="showInfo()">Info</button>
+    </nav>
+
+    <div class="popup" id="dashboardPopup">
+        <h2>Dashboard</h2>
+        <p>Welcome to your Content Shield Dashboard. Here's an overview of your protection:</p>
+        <div id="shieldStats"></div>
+        <button onclick="hideDashboard()">Close</button>
+    </div>
+
+    <div class="popup" id="settingsPopup">
+        <h2>Settings</h2>
+        <div class="settings-group">
+            <h3>Content Filtering</h3>
+            <label class="toggle-switch">
+                <input type="checkbox" id="contentFilterToggle" checked>
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="settings-group">
+            <h3>Filter Sensitivity</h3>
+            <input type="range" min="1" max="100" value="50" class="range-slider" id="sensitivitySlider">
+            <p id="sensitivityValue">Sensitivity: 50%</p>
+        </div>
+        <div class="settings-group">
+            <h3>Stealth Mode</h3>
+            <label class="toggle-switch">
+                <input type="checkbox" id="stealthModeToggle">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <button onclick="saveSettings()">Save Settings</button>
+    </div>
+
+    <div class="popup" id="analyticsPopup">
+        <h2>Analytics</h2>
+        <p>Here's a breakdown of the content we've protected you from:</p>
+        <div class="chart-container">
+            <canvas id="analyticsChart"></canvas>
+        </div>
+        <button onclick="hideAnalytics()">Close</button>
+    </div>
+
+    <div class="popup" id="infoPopup">
+        <h2>Information</h2>
+        <p id="motivationalQuote">Loading quote...</p>
+        <h3>Digital Wellbeing Tips:</h3>
+        <ul id="wellbeingTips"></ul>
+        <button onclick="hideInfo()">Got it</button>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Shield animation and category display
+        const shield = document.getElementById('shield');
+        const categories = ['Images', 'Videos', 'Text', 'Ads'];
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00'];
+        let rotation = 0;
+
+        function createShieldCategories() {
+            categories.forEach((category, index) => {
+                const element = document.createElement('div');
+                element.className = 'shield-category';
+                element.textContent = `${category}: 0%`;
+                element.style.color = colors[index];
+                shield.appendChild(element);
+            });
+        }
+
+        createShieldCategories();
+
+        // Stats update
+        const stats = document.getElementById('stats');
+        let totalBlocked = 0;
+        let blockedPercentage = 0;
+
+        function updateStats() {
+            const increment = Math.floor(Math.random() * 10);
+            totalBlocked += increment;
+            blockedPercentage = Math.min(Math.floor((totalBlocked / 1000) * 100), 99);
+            stats.textContent = `${blockedPercentage}% harmful content blocked today`;
+            updateShieldCategories();
+            if (increment > 5) {
+                showNotification(`Blocked ${increment} harmful items!`);
+            }
+        }
+        setInterval(updateStats, 3000);
+        updateStats(); // Initial update
+
+        // Motivational quotes
+        const quotes = [
+            "Shield your mind—consume what inspires, not what harms.",
+            "Your digital wellbeing starts with mindful browsing.",
+            "Protect your mental space, one click at a time.",
+            "Cultivate a positive online environment for growth.",
+            "Every filtered content is a step towards digital wellness."
+        ];
+        const quoteElement = document.getElementById('motivationalQuote');
+        function updateQuote() {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteElement.textContent = randomQuote;
+        }
+        updateQuote();
+
+        // Digital Wellbeing Tips
+        const tips = [
+            "Take regular breaks from screens",
+            "Practice mindful browsing",
+            "Set boundaries for your online time",
+            "Engage in offline activities",
+            "Curate a positive social media feed"
+        ];
+        const tipsElement = document.getElementById('wellbeingTips');
+        function updateTips() {
+            tipsElement.innerHTML = '';
+            tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.textContent = tip;
+                tipsElement.appendChild(li);
+            });
+        }
+        updateTips();
+
+        // Popup functionality
+        function showPopup(popupId) {
+            document.getElementById(popupId).classList.add('active');
+        }
+
+        function hidePopup(popupId) {
+            document.getElementById(popupId).classList.remove('active');
+        }
+
+        function showDashboard() {
+            const shieldStats = document.getElementById('shieldStats');
+            shieldStats.innerHTML = '';
+            categories.forEach(category => {
+                const percentage = Math.floor(Math.random() * blockedPercentage);
+                shieldStats.innerHTML += `<p>${category}: ${percentage}% blocked</p>`;
+            });
+            showPopup('dashboardPopup');
+        }
+
+        function hideDashboard() {
+            hidePopup('dashboardPopup');
+        }
+
+        function showSettings() {
+            showPopup('settingsPopup');
+        }
+
+        function saveSettings() {
+            const contentFilterEnabled = document.getElementById('contentFilterToggle').checked;
+            const sensitivity = document.getElementById('sensitivitySlider').value;
+            const stealthModeEnabled = document.getElementById('stealthModeToggle').checked;
+
+            // Simulating settings save
+            console.log('Settings saved:', { contentFilterEnabled, sensitivity, stealthModeEnabled });
+            showNotification('Settings saved successfully!');
+            hidePopup('settingsPopup');
+        }
+
+        function showAnalytics() {
+            showPopup('analyticsPopup');
+            updateAnalyticsChart();
+        }
+
+        function hideAnalytics() {
+            hidePopup('analyticsPopup');
+        }
+
+        function showInfo() {
+            updateQuote();
+            updateTips();
+            showPopup('infoPopup');
+        }
+
+        function hideInfo() {
+            hidePopup('infoPopup');
+        }
+
+        // Analytics Chart
+        let analyticsChart;
+        function updateAnalyticsChart() {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            const data = {
+                labels: categories,
+                datasets: [{
+                    label: 'Blocked Content (%)',
+                    data: categories.map(() => Math.floor(Math.random() * blockedPercentage)),
+                    backgroundColor: colors,
+                }]
+            };
+
+            if (analyticsChart) {
+                analyticsChart.data = data;
+                analyticsChart.update();
+            } else {
+                analyticsChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function updateShieldCategories() {
+            const categoryElements = document.querySelectorAll('.shield-category');
+            categoryElements.forEach((element, index) => {
+                const percentage = Math.floor(Math.random() * blockedPercentage);
+                element.textContent = `${categories[index]}: ${percentage}%`;
+            });
+        }
+
+        // Sensitivity slider
+        const sensitivitySlider = document.getElementById('sensitivitySlider');
+        const sensitivityValue = document.getElementById('sensitivityValue');
+        sensitivitySlider.addEventListener('input', function() {
+            sensitivityValue.textContent = `Sensitivity: ${this.value}%`;
+        });
+
+        // iOS-like animations for controls
+        const toggleSwitches = document.querySelectorAll('.toggle-switch input');
+        toggleSwitches.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const slider = this.nextElementSibling;
+                slider.style.transition = 'background-color 0.3s, transform 0.3s';
+                if (this.checked) {
+                    slider.style.transform = 'scale(1.05)';
+                    setTimeout(() => { slider.style.transform = 'scale(1)'; }, 150);
+                } else {
+                    slider.style.transform = 'scale(0.95)';
+                    setTimeout(() => { slider.style.transform = 'scale(1)'; }, 150);
+                }
+            });
+        });
+
+        sensitivitySlider.addEventListener('input', function() {
+            this.style.transition = 'box-shadow 0.3s';
+            this.style.boxShadow = '0 0 10px rgba(58, 134, 255, 0.5)';
+        });
+
+        sensitivitySlider.addEventListener('change', function() {
+            this.style.boxShadow = 'none';
+        });
+
+        // Notification system
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize
+        updateStats();
+        updateShieldCategories();
+    </script>
+</body>
+</html>
